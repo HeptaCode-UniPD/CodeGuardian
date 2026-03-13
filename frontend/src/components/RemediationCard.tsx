@@ -23,7 +23,6 @@ const DiffBlock = ({ part }: { part: Diff.Change }) => {
 
 export const UnifiedDiff = ({ oldCode, newCode }: { oldCode: string, newCode: string }) => {
   const diffResult = Diff.diffLines(oldCode, newCode);
-
   return (
     <pre>
       {diffResult.map((part, index) => (
@@ -46,15 +45,12 @@ export const RemediationCard = ({ remediation }: { remediation: FileRemediation 
       .catch(() => setStatus('error'));
   }, [remediation.fileUrl]);
 
+  if (status === 'loading') return <p>Recupero codice originale...</p>;
+  if (status === 'error') return <p>Errore nel caricamento del file.</p>;
+
   return (
-    <div>
-      <div className="diffCode">
-        {status === 'loading' && <p>Recupero codice originale...</p>}
-        {status === 'error' && <p>Errore nel caricamento del file.</p>}
-        {status === 'success' && originalCode && (
-          <UnifiedDiff oldCode={originalCode} newCode={remediation.newCode} />
-        )}
-      </div>
+    <div className="diffCode">
+      {originalCode && <UnifiedDiff oldCode={originalCode} newCode={remediation.newCode} />}
     </div>
   );
 };

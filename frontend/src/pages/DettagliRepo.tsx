@@ -22,7 +22,6 @@ export default function DettagliRepo() {
 
     const { id } = useParams<{ id: string }>(); //recupero l'id dall'URL per capire che repo sto guardando
     const [analisi, setAnalisi] = useState<Analysis | null>(null);
-    const [visibilita, setVisibilita] = useState<string>("Caricamento...");
     const [remediation, setRemediation] = useState<FileRemediation[] | null>([]);
     //come funziona, dato che poi lo dimentico:
     // useState : crea una variabile di stato, quando viene cambiata, React se ne accorge e ridisegna il componente
@@ -51,13 +50,11 @@ export default function DettagliRepo() {
                 if (dataAnalisi) {
                     setAnalisi(dataAnalisi);
 
-                    const [dataRemediation, repoStatus] = await Promise.all([
+                    const [dataRemediation] = await Promise.all([
                         api.getRemediationByRepoId(Number(id)),
-                        checkRepoVisibility(dataAnalisi.repoUrl)
                     ]);
 
                     setRemediation(dataRemediation ?? []);
-                    setVisibilita(repoStatus);
                 }
             } catch (err) {
                 console.error("Errore nel recupero dati:", err);
@@ -78,7 +75,7 @@ export default function DettagliRepo() {
         <div id="dettagli-repo">
             <aside>
                 <h1>{getRepoInfo(analisi.repoUrl).repoName}</h1>
-                <p id="visibility" className={visibilita}>{visibilita}</p>
+                <p id="visibility">{analisi.visibility}</p>
                 <form id="delete-repo">
                     <button>Elimina repository</button>
                 </form>

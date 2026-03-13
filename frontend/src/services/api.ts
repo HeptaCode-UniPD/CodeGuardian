@@ -7,6 +7,7 @@ export interface Analysis {
   percentDoc: number;
   percentOWASP: number;
   hystoryID: number;
+  visibility: string;
 }
 
 export interface FileRemediation {
@@ -24,7 +25,8 @@ export const mockAnalysis: Analysis[] = [
     percentTest: 95,
     percentDoc: 80,
     percentOWASP: 100,
-    hystoryID: 101
+    hystoryID: 101,
+    visibility: 'Public'
   },
   {
     _id: 2,
@@ -32,7 +34,8 @@ export const mockAnalysis: Analysis[] = [
     percentTest: 88,
     percentDoc: 90,
     percentOWASP: 95,
-    hystoryID: 102
+    hystoryID: 102,
+    visibility: 'Public'
   }
 ];
 
