@@ -37,13 +37,13 @@ jobs:
           node-version: '20'
 
       - name: Frontend Metrics & Tests
-        working-directory: ./frontend
+        working-directory: frontend/src
         run: |
           npm install
           npm test -- --coverage --watchAll=false || echo "Nessun test trovato in frontend"
 
       - name: Backend Metrics & Tests
-        working-directory: ./backend
+        working-directory: backend/src
         run: |
           npm install
           npm test -- --coverage --watchAll=false || echo "Nessun test trovato in backend"
