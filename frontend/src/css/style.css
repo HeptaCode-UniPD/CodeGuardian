@@ -72,10 +72,13 @@ summary:hover{
 .circle-bg, .circle-progress {
   stroke-width: var(--stroke-width);
   r: var(--normalized-radius);
+  fill: transparent;
 }
 
 .circle-bg {
   stroke: #262c36;
+  cx: 50;
+  cy: 50;
 }
 
 .circle-progress {
@@ -84,6 +87,8 @@ summary:hover{
   stroke-dashoffset: calc(var(--circumference) - (var(--percentage) / 100 * var(--circumference)));
   transition: stroke-dashoffset 1s ease-out;
   stroke-linecap: round;
+  cx: 50;
+  cy: 50;
 }
 
 .top-performance { stroke: #22c55e; }

@@ -3,22 +3,32 @@ import { fetchFileContent } from '../utils/GitHubUtils';
 import { type FileRemediation } from '../services/api';
 import * as Diff from 'diff';
 
+const getDiffProps = (part: Diff.Change) => ({
+  prefix: part.added ? '+ ' : part.removed ? '- ' : '  ',
+  className: part.added ? 'added-text' : part.removed ? 'removed-text' : ''
+});
+
+const DiffBlock = ({ part }: { part: Diff.Change }) => {
+  const { prefix, className } = getDiffProps(part);
+  const lines = part.value.split('\n').filter(line => line.trim() !== '');
+
+  return (
+    <div className={className}>
+      {lines.map((line, i) => (
+        <div key={i}>{prefix}{line}</div>
+      ))}
+    </div>
+  );
+};
+
 export const UnifiedDiff = ({ oldCode, newCode }: { oldCode: string, newCode: string }) => {
   const diffResult = Diff.diffLines(oldCode, newCode);
 
   return (
     <pre>
-      {diffResult.map((part, index) => {
-        const prefix = part.added ? '+ ' : part.removed ? '- ' : '  ';
-
-        return (
-          <div key={index} className={`${part.added ? 'added-text' : part.removed ? 'removed-text' : ''}`}>
-            {part.value.split('\n').map((line, i) => (
-              line && <div key={i}>{prefix}{line}</div>
-            ))}
-          </div>
-        );
-      })}
+      {diffResult.map((part, index) => (
+        <DiffBlock key={index} part={part} />
+      ))}
     </pre>
   );
 };

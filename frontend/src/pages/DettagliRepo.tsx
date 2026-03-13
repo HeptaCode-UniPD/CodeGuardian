@@ -1,10 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { type FileRemediation, type Analysis, api} from '../services/api';
 import { getRepoInfo, getFileInfo, checkRepoVisibility} from '../utils/GitHubUtils';
 import { RemediationCard} from '../components/RemediationCard';
 import { CircularProgress} from '../components/CircularProgress';
 import { useParams, Link } from 'react-router-dom';
 // import { api, API_URL, type Analysis } from '../services/api'; // Importa API_URL
+
+const RemediationSection = ({ title, items }: { title: string, items: FileRemediation[] }) => (
+  <li>
+    <p>{items.length} file: {title}</p>
+    {items.map((item) => (
+      <details key={item._id}> 
+        <summary>{getFileInfo(item.fileUrl).filePath}:</summary>
+        <dd> <RemediationCard remediation={item} /> </dd>
+      </details>
+    ))}
+  </li>
+);
 
 export default function DettagliRepo() {
 
@@ -22,7 +34,11 @@ export default function DettagliRepo() {
     //come funziona qeusto pezzo:
     //loading è booleano e false il valore iniziale perché non devo ottenere dati da DB, poi lo dovrò mettere a true
 
-
+    const gruppi = useMemo(() => ({
+        test: remediation?.filter(r => r.type === "Test"),
+        doc: remediation?.filter(r => r.type === "Documentazione"),
+        owasp: remediation?.filter(r => r.type === "OWASP")
+    }), [remediation]);
 
     // mi serve per recuperare i dati (da quanto dice Gemini, poi controllo meglio)
     useEffect(() => {
@@ -55,15 +71,6 @@ export default function DettagliRepo() {
 
     if (loading) return <p>Caricamento...</p>;
     if (!analisi) return <div>Analisi del repository selezionato non trovata. <Link to="/Repositories">← Indietro</Link></div>;
-
-    const conteggi = remediation?.reduce((acc: Record<string, number>, item) => {
-    acc[item.type] = (acc[item.type] || 0) + 1;
-    return acc;
-    }, { Test: 0, Documentazione: 0, OWASP: 0 });
-
-    const totale = (conteggi?.Test ?? 0) + 
-               (conteggi?.Documentazione ?? 0) + 
-               (conteggi?.OWASP ?? 0);
 
     // TODO: i pulsanti per avviare analisi e la visualizzazione della remediation proposta cambia a seconda dello stato dell'
     //analisi, se è in corso i pulsanti non saranno cliccabili e la remediation avrà uno stato di caricamento    
@@ -102,38 +109,11 @@ export default function DettagliRepo() {
                 </div>
 
                 <div id="remediation-block">
-                    <h2>{totale} file con suggerimento remediation</h2>
+                    <h2>{remediation?.length} file con suggerimento remediation</h2>
                     <ul id="remediation-list">
-                        <li>
-                            <p>{conteggi?.Test} file: Copertura test</p>
-                            {remediation?.filter(r => r.type === "Test")?.map((item: FileRemediation) => (
-                                <details key={item._id}> 
-                                    <summary>{getFileInfo(item.fileUrl).filePath}:</summary>
-                                    <dd> <RemediationCard key={item._id} remediation={item} /> </dd>
-                                </details>
-                            ))}
-                        </li>
-
-                        <li>
-                            <p>{conteggi?.Documentazione} file: Completezza documentaizone</p>
-                            {remediation?.filter(r => r.type === "Documentazione")?.map((item: FileRemediation) => (
-                                <details key={item._id}> 
-                                    <summary>{getFileInfo(item.fileUrl).filePath}:</summary>
-                                    <dd> <RemediationCard key={item._id} remediation={item} /> </dd>
-                                </details>
-                            ))}
-                        </li>
-
-                        <li>
-                            <p>{conteggi?.OWASP} file: Correttazza OWASP</p>
-                            {remediation?.filter(r => r.type === "Test")?.map((item: FileRemediation) => (
-                                <details key={item._id}> 
-                                    <summary>{getFileInfo(item.fileUrl).filePath}:</summary>
-                                    <dd> <RemediationCard key={item._id} remediation={item} /> </dd>
-                                </details>
-                            ))}
-                        </li>
-
+                        <RemediationSection title="Copertura test" items={gruppi.test ?? []} />
+                        <RemediationSection title="Completezza documentazione" items={gruppi.doc ?? []} />
+                        <RemediationSection title="Correttezza OWASP" items={gruppi.owasp ?? []} />
                     </ul>
                 </div>
 

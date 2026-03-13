@@ -17,22 +17,12 @@ export const CircularProgress: React.FC<Props> = ({ percentage, label, size = 90
   return (
     <div>
       <div className="percentage" style={{ width: size, height: size }}>
-        <svg
-          height={size}
-          width={size}
-          viewBox="0 0 100 100"
-        >
-          <circle
-            className="circle-bg"
-            cx="50"
-            cy="50"
-            fill="transparent"
-          />
+        <svg  height={size} width={size} viewBox="0 0 100 100" >
+          
+          <circle className="circle-bg"/>
           
           <circle
             className={`circle-progress ${getColorClass(percentage)}`}
-            cx="50"
-            cy="50"
             style={{ '--percentage': percentage } as React.CSSProperties}
           />
         </svg>

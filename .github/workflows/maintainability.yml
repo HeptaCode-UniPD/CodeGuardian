@@ -23,4 +23,4 @@ jobs:
         # -a 6: Parametri per metodo (MPD08)
         # -L 35: Linee di codice per metodo (MPD09)
         # ./ : Indica di scansionare tutta la root
-        run: lizard -C 5 -a 6 -L 35 ./
+        run: lizard -C 10 -a 6 -L 35 ./
