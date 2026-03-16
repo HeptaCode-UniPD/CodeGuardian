@@ -1,59 +1,50 @@
 import { useState, useEffect, useMemo } from 'react';
-import { type FileRemediation, type Analysis, api, /*API_URL*/} from '../services/api';
-import { getRepoInfo, getFileInfo} from '../utils/GitHubUtils';
+import { type AnalysisReport, type Repository, AnalysisType} from '../types/types';
+import { getAnalysisPayload} from '../services/analysisService';
 import { RemediationCard} from '../components/RemediationCard';
 import { CircularProgress} from '../components/CircularProgress';
 import { useParams, Link } from 'react-router-dom';
 
-const RemediationSection = ({ title, items }: { title: string, items: FileRemediation[] }) => (
+interface GruppiRemediation {
+  test?: AnalysisReport[];
+  doc?: AnalysisReport[];
+  owasp?: AnalysisReport[];
+}
+
+const RemediationSection = ({ title, items }: { title: string, items: AnalysisReport[] }) => (
   <li>
     <p>{items.length} file: {title}</p>
     {items.map((item) => (
-      <details key={item._id}> 
-        <summary>{getFileInfo(item.fileUrl).filePath}:</summary>
+      <details key={item.id}> 
+        <summary>{item.path}:</summary>
         <dd> <RemediationCard remediation={item} /> </dd>
       </details>
     ))}
   </li>
 );
 
-const InfoRepo = ({analisi}:{analisi: Analysis}) => {
-    return(
-        <aside>
-            <h1>{getRepoInfo(analisi.repoUrl).repoName}</h1>
-            <p id="visibility">{analisi.visibility}</p>
-            <form id="delete-repo">
-                <button>Elimina repository</button>
-            </form>
-            <a href={analisi.repoUrl} target="_blank">Vedi su GitHub</a>
-            <Link to="/Repositories">← Indietro</Link>
-        </aside>
-    )
-};
-
-const getAnalysisPayload = async (id: string) => {
-    const dataAnalisi = await api.getAnalysisById(Number(id));
-    if (!dataAnalisi) return null;
-    const [dataRemediation] = await Promise.all([
-        api.getRemediationByRepoId(Number(id)),
-    ]);
-
-    return {
-        analisi: dataAnalisi,
-        remediation: dataRemediation ?? []
-    };
-};
+const InfoRepo = ({repository}:{repository: Repository}) => (
+    <aside>
+        <h1>{repository.name}</h1>
+        <p id="visibility">{repository.visibility}</p>
+        <form id="delete-repo">
+            <button>Elimina repository</button>
+        </form>
+        <a href={repository.url} target="_blank">Vedi su GitHub</a>
+        <Link to="/Repositories">← Indietro</Link>
+    </aside>
+);
 
 export default function DettagliRepo() {
     const { id } = useParams<{ id: string }>(); //recupero l'id dall'URL per capire che repo sto guardando
-    const [analisi, setAnalisi] = useState<Analysis | null>(null); // useState : crea una variabile di stato, quando viene cambiata, React se ne accorge e ridisegna il componente
-    const [remediation, setRemediation] = useState<FileRemediation[] | null>([]);
+    const [repository, setAnalisi] = useState<Repository | null>(null); // useState : crea una variabile di stato, quando viene cambiata, React se ne accorge e ridisegna il componente
+    const [remediation, setRemediation] = useState<AnalysisReport[] | null>([]);
     const [loading, setLoading] = useState(true);
 
-    const gruppi = useMemo(() => ({
-        test: remediation?.filter(r => r.type === "Test"),
-        doc: remediation?.filter(r => r.type === "Documentazione"),
-        owasp: remediation?.filter(r => r.type === "OWASP")
+    const gruppi = useMemo<GruppiRemediation>(() => ({
+        test: remediation?.filter(r => r.type === AnalysisType.Test),
+        doc: remediation?.filter(r => r.type === AnalysisType.Documentation),
+        owasp: remediation?.filter(r => r.type === AnalysisType.Owasp)
     }), [remediation]);
 
     useEffect(() => {
@@ -63,7 +54,7 @@ export default function DettagliRepo() {
                 setLoading(true);
             const result = await getAnalysisPayload(id);
             if (result) {
-                setAnalisi(result.analisi);
+                setAnalisi(result.repository);
                 setRemediation(result.remediation);
             }} catch (err) {
                 console.error("Errore nel recupero dati:", err);
@@ -73,12 +64,12 @@ export default function DettagliRepo() {
     }, [id]);
 
     if (loading) return <p>Caricamento...</p>;
-    if (!analisi) return <div>Analisi del repository selezionato non trovata. <Link to="/Repositories">← Indietro</Link></div>;
+    if (!repository) return <div>Analisi del repository selezionato non trovata. <Link to="/Repositories">← Indietro</Link></div>;
  
-    return ( // TODO: i pulsanti dovranno cambiare a seconda se l'analisi è avviata o meno
+    return ( // TODO: i pulsanti dovranno cambiare a seconda se l'repository è avviata o meno
         <div id="dettagli-repo">
 
-            <InfoRepo analisi={analisi}/>
+            <InfoRepo repository={repository}/>
 
             <div id="details-repo-content">
                 <div id="analisi-block">
@@ -86,19 +77,19 @@ export default function DettagliRepo() {
                         <h2>Analisi</h2>
                         <ul id="report-percentage">
                             <li>
-                                <CircularProgress percentage={analisi.percentTest} label="Copertura Test"/>
-                                <form><button>Avvia analisi test</button></form>
+                                <CircularProgress percentage={repository.pctTest} label="Copertura Test"/>
+                                <form><button>Avvia repository test</button></form>
                             </li>
                             <li>
-                                <CircularProgress percentage={analisi.percentDoc} label="Completezza Documentazione"/>
-                                <form><button>Avvia analisi documentaizone</button></form>
+                                <CircularProgress percentage={repository.pctDoc} label="Completezza Documentazione"/>
+                                <form><button>Avvia repository documentaizone</button></form>
                             </li>
                             <li>
-                                <CircularProgress percentage={analisi.percentOWASP} label="Correttezza OWASP"/>
-                                <form><button>Avvia analisi OWASP</button></form>
+                                <CircularProgress percentage={repository.pctOwasp} label="Correttezza OWASP"/>
+                                <form><button>Avvia repository OWASP</button></form>
                             </li>
                         </ul>
-                        <form><button id="start-all">Avvia tutte le analisi</button></form>
+                        <form><button id="start-all">Avvia tutte le repository</button></form>
                     </div>
                 </div>
 

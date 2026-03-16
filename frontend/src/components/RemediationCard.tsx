@@ -1,37 +1,17 @@
-import { useEffect, useState } from 'react';
-import { fetchFileContent } from '../utils/GitHubUtils';
-import { type FileRemediation } from '../services/api';
+import { type AnalysisReport } from '../types/types';
 import * as Diff from 'diff';
 
-const getDiffProps = (part: Diff.Change) => ({
+interface DiffProps {
+  prefix: string;
+  className: string;
+}
+
+const getDiffProps = (part: Diff.Change): DiffProps => ({
   prefix: part.added ? '+ ' : part.removed ? '- ' : '  ',
   className: part.added ? 'added-text' : part.removed ? 'removed-text' : ''
 });
 
-export const RemediationCard = ({ remediation }: { remediation: FileRemediation }) => {
-  const [originalCode, setOriginalCode] = useState<string | null>(null);
-  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
-
-  useEffect(() => {
-    fetchFileContent(remediation.fileUrl)
-      .then(code => {
-        setOriginalCode(code);
-        setStatus('success');
-      })
-      .catch(() => setStatus('error'));
-  }, [remediation.fileUrl]);
-
-  if (status === 'loading') return <p>Recupero codice originale...</p>;
-  if (status === 'error') return <p>Errore nel caricamento del file.</p>;
-
-  return (
-    <div className="diffCode">
-      {originalCode && <UnifiedDiff oldCode={originalCode} newCode={remediation.newCode} />}
-    </div>
-  );
-};
-
-function UnifiedDiff({oldCode, newCode} : { oldCode: string, newCode: string }) {
+const UnifiedDiff = ({oldCode, newCode} : { oldCode: string, newCode: string }) => {
   const diffResult = Diff.diffLines(oldCode, newCode);
   return (
     <article>
@@ -42,14 +22,22 @@ function UnifiedDiff({oldCode, newCode} : { oldCode: string, newCode: string }) 
   );
 }
 
-function DiffBlock(props: { part: Diff.Change }) {
-  const { part } = props;
+const DiffBlock = ({ part }: { part: Diff.Change }) => {
   const { prefix, className } = getDiffProps(part);
   const lines = part.value.split('\n').filter(line => line.trim() !== '');
 
   const renderedLines = lines.map((line, i) => (
-    <div>{i} {prefix}{line}</div>
+    <div key={i}>{prefix}{line}</div>
   ));
 
   return <div className={className}>{renderedLines}</div>;
-}
+};
+
+export const RemediationCard = ({ remediation }: { remediation: AnalysisReport }) => {
+
+  return (
+    <div className="diffCode">
+      {remediation.originalCode && <UnifiedDiff oldCode={remediation.originalCode} newCode={remediation.newCode} />}
+    </div>
+  );
+};
