@@ -31,7 +31,7 @@ const InfoRepo = ({repository}:{repository: Repository}) => (
             <button>Elimina repository</button>
         </form>
         <a href={repository.url} target="_blank">Vedi su GitHub</a>
-        <Link to="/Repositories">← Indietro</Link>
+        <Link to="/repositories">← Indietro</Link>
     </aside>
 );
 

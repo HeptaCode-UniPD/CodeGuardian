@@ -31,8 +31,7 @@ export enum AnalysisType {
 // report dell'analisi
 export interface AnalysisReport{
     id: string,
-    userID: string,
-    repositoryID: string,
+    repositoryID: string, //non ho messo userID, non credo serva
     status: AnalysisStatus,
     insight: AnalysisInsight,
     analysisDate: Date,
@@ -46,7 +45,7 @@ export interface AnalysisReport{
 // info repository
 export interface Repository{
     id: string,
-    userID: string,
+    userID: string[], //un repository può essere aggiunto da più persone
     url: string,
     token: string,
     pathStorage: string,
@@ -89,7 +88,7 @@ const mock_insights2: AnalysisInsight = {
 export const mock_repositories: Repository[] = [
     {
         id: "1",
-        userID: "1",
+        userID: ["1", "2"],
         url: "https://github.com/HeptaCode-UniPD/CodeGuardian",
         token: "ghp_secureToken123",
         pathStorage: "/storage/code-guardian",
@@ -103,7 +102,7 @@ export const mock_repositories: Repository[] = [
     },
     {
         id: "2",
-        userID: "1",
+        userID: ["1"],
         url: "https://github.com/HeptaCode-UniPD/PoC",
         token: "ghp_secureToken456",
         pathStorage: "/storage/poc",
@@ -121,7 +120,6 @@ export const mock_repositories: Repository[] = [
 export const mock_reports: AnalysisReport[] = [
     {
         id: "1",
-        userID: "1",
         repositoryID: "1",
         status: AnalysisStatus.Done,
         insight: mock_insights1,
@@ -141,7 +139,6 @@ export const mock_reports: AnalysisReport[] = [
     },
     {
         id: "2",
-        userID: "1",
         repositoryID: "1",
         status: AnalysisStatus.Failed,
         insight: mock_insights2,
