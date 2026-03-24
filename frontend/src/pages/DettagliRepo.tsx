@@ -3,7 +3,8 @@ import { type AnalysisReport, type Repository, AnalysisType} from '../types/type
 import { getAnalysisPayload} from '../services/analysisService';
 import { RemediationCard} from '../components/RemediationCard';
 import { CircularProgress} from '../components/CircularProgress';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link} from 'react-router-dom';
+import { isLogged } from '../services/SessionService';
 
 interface GruppiRemediation {
   test?: AnalysisReport[];
@@ -36,6 +37,7 @@ const InfoRepo = ({repository}:{repository: Repository}) => (
 );
 
 export default function DettagliRepo() {
+    isLogged();
     const { id } = useParams<{ id: string }>(); //recupero l'id dall'URL per capire che repo sto guardando
     const [repository, setAnalisi] = useState<Repository | null>(null); // useState : crea una variabile di stato, quando viene cambiata, React se ne accorge e ridisegna il componente
     const [remediation, setRemediation] = useState<AnalysisReport[] | null>([]);
@@ -49,18 +51,17 @@ export default function DettagliRepo() {
 
     useEffect(() => {
         if(!id) return;
+
         const fetchData = async () => {
-            try {
-                setLoading(true);
+            setLoading(true);
             const result = await getAnalysisPayload(id);
             if (result) {
                 setAnalisi(result.repository);
-                setRemediation(result.remediation);
-            }} catch (err) {
-                console.error("Errore nel recupero dati:", err);
-            } finally { setLoading(false); }
-        };
+                setRemediation(result.remediation);}
+            setLoading(false);}
+
         if (id) fetchData();
+            
     }, [id]);
 
     if (loading) return <p>Caricamento...</p>;

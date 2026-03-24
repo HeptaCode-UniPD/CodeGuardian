@@ -19,7 +19,7 @@ async function getRepositoriesByUser(id: string): Promise<Types.Repository[] | u
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-export async function checkRepoValid(url: string) {
+export async function checkRepoValid(url: string): Promise<boolean> {
   // const response = await fetch(`${API_URL}/check-privacy`, {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
@@ -30,11 +30,10 @@ export async function checkRepoValid(url: string) {
   
   // return response.json(); 
   await delay(1000);
-  const isValid = url.toLowerCase().includes("github.com");
-  return { isValid };
+  return true;
 }
 
-export async function checkRepoPrivacy(url: string) {
+export async function checkRepoAccess(url: string): Promise<boolean> {
   // const response = await fetch(`${API_URL}/check-privacy`, {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
@@ -45,11 +44,10 @@ export async function checkRepoPrivacy(url: string) {
   // return response.json(); 
 
   await delay(1000);
-  const isPrivate = url.toLowerCase().includes("private") || url.toLowerCase().includes("secret");
-  return { isPrivate };
+  return false;
 }
 
-export async function checkRepoToken(url: string, token: string) {
+export async function checkRepoToken(url: string, token: string): Promise<boolean> {
   // const response = await fetch(`${API_URL}/verify-token`, {
   //   method: 'POST',
   //   headers: { 'Content-Type': 'application/json' },
@@ -59,6 +57,5 @@ export async function checkRepoToken(url: string, token: string) {
   // return response.json();
 
   await delay(1000);
-  const isValid = token === "12345";
-  return { isValid };
+  return true;
 }

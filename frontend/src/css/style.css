@@ -13,6 +13,7 @@
   --txt : #f2f2f2;
   --button: #3B8640;
   --border: #3D444D;
+  --disable: #32363a;
   --interactive-area: #262C36;
   --bgcolor: #212830;
   --nav-bg: #151B23;
@@ -40,7 +41,9 @@ body{
   scroll-behavior: smooth;
 }
 
-button{
+button, 
+label,
+input{
   font-family: var(--normal-txt);
   font-size: 100%;
 }
@@ -143,6 +146,7 @@ summary:hover{
   background-color: transparent;
   padding: 0.5em;
   margin-top: 0.7em;
+  transition: 0.3s;
 }
 
 #report-percentage .label-persentage{
@@ -424,4 +428,246 @@ main #repositories-page aside a{
   color: var(--txt);
   font-weight: 500;
   text-decoration: none;
+}
+
+/* ----- LOGIN ------ */
+#login-page{
+  border: 1px solid var(--border);
+  max-width: 1200px;
+  margin: 3em auto;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#login-page #login-image::before{
+  content: url('../assets/login.svg');
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  margin: 3em;
+  flex: 1 1 50%;
+}
+
+#login-page form{
+  background-color: var(--border);
+  flex: 1 1 50%;
+  padding: 3em;
+}
+
+#add-repository-page form legend,
+#login-page form legend{
+  font-size: 2em;
+  font-weight: 500;
+  text-align:center;
+  margin-bottom: 1.5em;
+}
+
+#add-repository-page form div:has(input),
+#login-page form div:has(input){
+  display: flex;
+  margin-bottom: 1em;
+}
+
+#add-repository-page form label,
+#login-page form label{
+  flex: 0 0 20%;
+  margin-right: 0.5em;
+}
+
+#add-repository-page form input,
+#login-page form input{
+  flex: 80%;
+}
+
+#login-page form div:has(button){
+  display: flex;
+  margin-top: 3em;
+}
+
+#login-page form div:has(button):last-of-type{
+  gap: 1em;
+}
+
+#add-repository-page form input,
+#login-page form input{
+  border-radius: 0.5em;
+  border:none;
+  background-color: var(--bgcolor);
+  padding: 0.3em 1em;
+}
+
+#add-repository-page form input,
+#login-page form input:focus{
+  outline: 2px solid var(--detail-txt);
+}
+
+#add-repository-page form label,
+#login-page form label{
+  padding: 0.3em auto;
+}
+
+#add-repository-page form button,
+#add-repository-page form a#annulla,
+#profile-page article button,
+#login-page form button{
+  flex:1 1 50%;
+  border-radius: 0.5em;
+  padding: 0.3em 1em;
+  transition: 0.3s;
+}
+
+#add-repository-page form a#annulla,
+#login-page form button#reset-button{
+  border: 2px solid var(--bgcolor);
+  background-color: transparent;
+}
+
+#login-page form button#login{
+  background-color: var(--bgcolor);
+  border:none;
+  color:var(--txt);
+  border: 2px solid transparent;
+}
+
+#login-page form button#login:hover,
+#login-page form button#reset-button:hover{
+  background-color: transparent;
+  border-color: transparent;
+}
+
+#login-page form button#login:disabled,
+#login-page form button#reset-button:disabled{
+  background-color: var(--disable);
+  color: var(--detail-txt);
+  border:transparent;
+  cursor: default;
+}
+
+#login-page form button#password-icon{
+  background-color: transparent;
+  border:none;
+  flex: 1 1 5%;
+  margin-left: -3em;
+}
+
+#add-repository-page h1,
+#login-page h1{
+  position:absolute;
+  left: -100%;
+}
+
+#loading{
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+/* ----- LOGIN ------ */
+#add-repository-page,
+#profile-page{
+  border: 1px solid var(--border);
+  max-width: 1200px;
+  margin: 3em auto;
+  padding: 1em 2em;
+}
+
+#profile-page article{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#profile-page article div{
+  flex: 50%;
+}
+
+#profile-page article dl{
+  flex: 50%;
+}
+
+#profile-page article dt{
+  float: left;
+  margin-right: 0.5em;
+}
+
+#profile-page #avatar{
+  content: url('../assets/avatar.svg');
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5em;
+  margin: 3em;
+}
+
+#profile-page article button{
+  width: 100%;
+  border: 2px solid var(--border);
+  background-color: transparent;
+}
+
+#profile-page article button:hover{
+  background-color: var(--border);
+}
+
+#profile-page article button::before{
+  content: url('../assets/sign-out.svg');
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5em;
+}
+
+/* ----- ADD REPOSITORY ------ */
+main #add-repository-page{
+  border: none;
+}
+
+#add-repository-page form legend{
+  text-align: left;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--border);
+}
+
+#add-repository-page form input{
+  background-color: var(--interactive-area);
+}
+
+#add-repository-page form #form-actions{
+  margin: 0 0 0 auto;
+  width: fit-content;
+}
+
+#add-repository-page form a#annulla{
+  border: 2px solid var(--detail-txt);
+  margin-right: 1em;
+  text-decoration: none;
+  color: var(--txt);
+  font-weight: 500;
+  padding: 0.3em 3em;
+  transition: 0.3s;
+}
+
+#add-repository-page form button{
+  border: 2px solid var(--button);
+  background-color: var(--button);
+  text-decoration: none;
+  color: var(--txt);
+  font-weight: 500;
+  padding: 0.3em 3em;
+  transition: 0.3s;
+}
+
+#add-repository-page form a#annulla:hover{
+  border-color:transparent;
+}
+
+#add-repository-page form button:hover{
+  background-color: transparent;
+}
+
+#add-repository-page form p#hint{
+  color: var(--detail-txt);
+}
+
+.error{
+  color: var(--txt);
+  background-color: color-mix(in srgb, var(--removed-code), transparent 50%);
+  border-radius: 0.5em;
+  padding: 0.5em 2em;
 }

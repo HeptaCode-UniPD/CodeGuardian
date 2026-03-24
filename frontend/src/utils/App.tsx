@@ -1,7 +1,10 @@
 import { createBrowserRouter, RouterProvider, Outlet, Navigate } from 'react-router-dom';
 import Repositories from '../pages/Repositories';
 import DettagliRepo from '../pages/DettagliRepo';
-import AddRepository from '../pages/addRepository';
+import AddRepository from '../pages/AddRepository';
+import UserPage from '../pages/UserPage';
+import Login from '../pages/Login';
+import { isLogged } from '../services/SessionService';
 import { NavBar } from '../components/NavBar';
 
 const RootLayout = () => (
@@ -40,6 +43,16 @@ const router = createBrowserRouter([
         path: "/addRepository",
         element: <AddRepository />,
         handle: { label: "Aggiungi repository" },
+      },
+      {
+        path: "/profile",
+        element: <UserPage />,
+        handle: { label: "Profilo" },
+      },
+      {
+        path: "/login",
+        element: <Login />,
+        handle: { label: "Login" },
       },
       {
         path: "*",

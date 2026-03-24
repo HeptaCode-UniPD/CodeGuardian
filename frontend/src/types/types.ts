@@ -2,7 +2,9 @@
 export interface User{
     id: string,
     email: string,
-    password: string
+    password: string,
+    nome: string,
+    cognome: string
 }
 
 // stato dell'analisi
@@ -34,7 +36,6 @@ export interface AnalysisReport{
     repositoryID: string, //non ho messo userID, non credo serva
     status: AnalysisStatus,
     insight: AnalysisInsight,
-    analysisDate: Date,
     type: AnalysisType,
 
     originalCode: string,
@@ -47,9 +48,6 @@ export interface Repository{
     id: string,
     userID: string[], //un repository può essere aggiunto da più persone
     url: string,
-    token: string,
-    pathStorage: string,
-    lastCommit: Date,
 
     visibility: string,
     name: string,
@@ -63,11 +61,15 @@ export interface Repository{
 // --- mock ---
 
 // Mock Utente
-export const mock_user: User = {
-    id: "1",
-    email: "developer@heptacode.it",
-    password: "1234"
-};
+export const mock_user: User[] = [
+    {
+        id: "1",
+        email: "developer@heptacode.it",
+        password: "1234",
+        nome: "Mario",
+        cognome: "Rossi"
+    }
+]
 
 // Mock Insights
 const mock_insights1: AnalysisInsight = {
@@ -90,9 +92,6 @@ export const mock_repositories: Repository[] = [
         id: "1",
         userID: ["1", "2"],
         url: "https://github.com/HeptaCode-UniPD/CodeGuardian",
-        token: "ghp_secureToken123",
-        pathStorage: "/storage/code-guardian",
-        lastCommit: new Date('2026-03-10T14:30:00'),
 
         visibility: "public",
         name: "CodeGuardian",
@@ -104,9 +103,6 @@ export const mock_repositories: Repository[] = [
         id: "2",
         userID: ["1"],
         url: "https://github.com/HeptaCode-UniPD/PoC",
-        token: "ghp_secureToken456",
-        pathStorage: "/storage/poc",
-        lastCommit: new Date('2026-03-15T09:15:00'),
 
         visibility: "private",
         name: "PoC",
@@ -123,7 +119,6 @@ export const mock_reports: AnalysisReport[] = [
         repositoryID: "1",
         status: AnalysisStatus.Done,
         insight: mock_insights1,
-        analysisDate: new Date('2026-03-11T10:00:00'),
         type: AnalysisType.Test,
 
         originalCode: `import React from 'react';
@@ -142,7 +137,6 @@ export const mock_reports: AnalysisReport[] = [
         repositoryID: "1",
         status: AnalysisStatus.Failed,
         insight: mock_insights2,
-        analysisDate: new Date('2026-03-16T11:00:00'),
         type: AnalysisType.Owasp,
 
         originalCode: `// Funzione di prova

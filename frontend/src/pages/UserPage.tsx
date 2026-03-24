@@ -1,0 +1,58 @@
+import { useEffect, useState } from 'react';
+import {getInfoUserByID} from '../services/UserService';
+import { type User} from '../types/types';
+import { logout, getUserID, isLogged} from '../services/SessionService';
+import { useNavigate } from 'react-router-dom';
+
+export default function UserPage() {
+    isLogged();
+    const navigate = useNavigate();
+    const key = 'userID';
+    const id = (getUserID(key));
+    const [user, setUserInfo] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    
+    useEffect(() => {
+        if(!id) return
+
+        const fetchData = async () => {
+            setLoading(true);
+            const result = await getInfoUserByID(id);
+            if (result) {setUserInfo(result);}
+            setLoading(false);};
+
+        if (id) fetchData();
+    }, [id]);
+
+    if (loading) return <p>Caricamento...</p>;
+ 
+
+const handleLogout = async () => {
+  logout(key);
+  navigate('/login');
+};
+
+  return (
+    <div id="profile-page">
+        <h1>Ciao {user?.nome} {user?.cognome}!</h1>
+        <article>
+            <div>
+                <p id="avatar"></p>
+            </div>
+            <div>
+                <dl>
+                    <dt>Nome: </dt>
+                    <dd>{user?.nome}</dd>
+                    <dt>Cognome: </dt>
+                    <dd>{user?.cognome}</dd>
+                    <dt>Email: </dt>
+                    <dd>{user?.email}</dd>
+                </dl>
+                <button type="button" onClick={handleLogout} id="logout">
+                    Esci
+                </button>
+            </div>
+        </article>
+    </div>
+  );
+}
