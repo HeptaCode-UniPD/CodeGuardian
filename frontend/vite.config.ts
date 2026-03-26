@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
@@ -6,11 +6,23 @@ export default defineConfig({
   plugins: [react()],
 
   server: {
-    host: '0.0.0.0',
+    host: true,
+    strictPort: true,
     port: 5173,
     watch: {
       usePolling: true,
     },
+  },
+  
+  test: {
+    watch: false,
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setupTests.ts',
+    clearMocks: true,
+
+    testTimeout: 60000,
+    hookTimeout: 60000,
   },
 
 })

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { type AnalysisReport, type Repository, AnalysisType} from '../types/types';
-import { getAnalysisPayload} from '../services/analysisService';
+import { getAnalysisPayload} from '../services/AnalysisService';
 import { RemediationCard} from '../components/RemediationCard';
 import { CircularProgress} from '../components/CircularProgress';
 import { useParams, Link} from 'react-router-dom';
@@ -79,18 +79,15 @@ export default function DettagliRepo() {
                         <ul id="report-percentage">
                             <li>
                                 <CircularProgress percentage={repository.pctTest} label="Copertura Test"/>
-                                <form><button>Avvia repository test</button></form>
                             </li>
                             <li>
                                 <CircularProgress percentage={repository.pctDoc} label="Completezza Documentazione"/>
-                                <form><button>Avvia repository documentaizone</button></form>
                             </li>
                             <li>
                                 <CircularProgress percentage={repository.pctOwasp} label="Correttezza OWASP"/>
-                                <form><button>Avvia repository OWASP</button></form>
                             </li>
                         </ul>
-                        <form><button id="start-all">Avvia tutte le repository</button></form>
+                        <form><button id="start-all">Avvia analisi</button></form>
                     </div>
                 </div>
 

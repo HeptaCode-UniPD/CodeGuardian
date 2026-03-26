@@ -8,7 +8,7 @@ export interface User{
 }
 
 // stato dell'analisi
-enum AnalysisStatus {
+export enum AnalysisStatus {
     Pending = 'pending',
     Running = 'running',
     Done = 'done',
@@ -55,98 +55,3 @@ export interface Repository{
     pctDoc: number
     pctOwasp: number
 }
-
-
-
-// --- mock ---
-
-// Mock Utente
-export const mock_user: User[] = [
-    {
-        id: "1",
-        email: "developer@heptacode.it",
-        password: "1234",
-        nome: "Mario",
-        cognome: "Rossi"
-    }
-]
-
-// Mock Insights
-const mock_insights1: AnalysisInsight = {
-    summary: "Il repository segue bene le convenzioni di naming, ma mancano i test di integrazione.",
-    strengths: ["Ottima documentazione interna", "Clean Code", "Modularità"],
-    weakness: ["Copertura test bassa", "Dipendenze obsolete"],
-    analysisID: "1"
-};
-
-const mock_insights2: AnalysisInsight = {
-    summary: "PoC funzionale, ma con diverse vulnerabilità OWASP rilevate nelle dipendenze.",
-    strengths: ["Velocità di esecuzione", "Logica chiara"],
-    weakness: ["Hardcoded secrets", "Mancanza di HTTPS"],
-    analysisID: "2"
-};
-
-// Mock Repository
-export const mock_repositories: Repository[] = [
-    {
-        id: "1",
-        userID: ["1", "2"],
-        url: "https://github.com/HeptaCode-UniPD/CodeGuardian",
-
-        visibility: "public",
-        name: "CodeGuardian",
-        pctTest: 80,
-        pctDoc: 90,
-        pctOwasp: 40
-    },
-    {
-        id: "2",
-        userID: ["1"],
-        url: "https://github.com/HeptaCode-UniPD/PoC",
-
-        visibility: "private",
-        name: "PoC",
-        pctTest: 60,
-        pctDoc: 79,
-        pctOwasp: 90
-    }
-];
-
-// Mock Reports
-export const mock_reports: AnalysisReport[] = [
-    {
-        id: "1",
-        repositoryID: "1",
-        status: AnalysisStatus.Done,
-        insight: mock_insights1,
-        type: AnalysisType.Test,
-
-        originalCode: `import React from 'react';
-        const App = () => {
-        return <div>Ciao</div>;
-        };`,
-                
-                newCode: `import React from 'react';
-        const App = () => {
-        return <div>Ciao mondo!</div>; // Riga modificata
-        };`,
-        path: "src/components/comp1.tsx"
-    },
-    {
-        id: "2",
-        repositoryID: "1",
-        status: AnalysisStatus.Failed,
-        insight: mock_insights2,
-        type: AnalysisType.Owasp,
-
-        originalCode: `// Funzione di prova
-        function test() {
-            console.log("esecuzione...");
-        }`,
-                newCode: `// Funzione di prova
-        // Log rimosso per sicurezza
-        function test() {
-        }`,
-        path: "src/components/comp2.tsx"
-    }
-];

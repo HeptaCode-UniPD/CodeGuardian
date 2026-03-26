@@ -1,9 +1,10 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 import * as Types from '../types/types';
+import * as Mock from '../test/mock';
 
 export async function getInfoUserByID(id: string): Promise<Types.User | undefined> {
   return new Promise((resolve) => {
-    const found = Types.mock_user.find(item => item.id === id);
+    const found = Mock.mock_user.find(item => item.id === id);
     resolve(found);
   });
 };
