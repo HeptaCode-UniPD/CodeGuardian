@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
@@ -17,11 +17,19 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
   test:
-    name: run tests 
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: npm install
-      - name: Run Vitest
-        run: npm run test
+      name: run tests 
+      runs-on: ubuntu-latest
+      defaults:
+        run:
+          working-directory: frontend
+      steps:
+        - uses: actions/checkout@v4
+        - name: Use Node.js
+          uses: actions/setup-node@v4
+          with:
+            cache: 'npm'
+            cache-dependency-path: frontend/package.json
+        - name: Install dependencies
+          run: npm install
+        - name: Run Vitest
+          run: npm run test
