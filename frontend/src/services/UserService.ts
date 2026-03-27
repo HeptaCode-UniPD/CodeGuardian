@@ -4,25 +4,24 @@ import * as Mock from '../test/mock';
 
 export async function getInfoUserByID(id: string): Promise<Types.User | undefined> {
   return new Promise((resolve) => {
-    const found = Mock.mock_user.find(item => item.id === id);
+    const found = Mock.mock_user.find(item => item.userId === id);
     resolve(found);
   });
 };
 
-export async function getIDbyEmail(email: string): Promise<string> {
-  await delay(1000);
-  return "1";
-}
+export async function checkCredentials(email: string, password: string): Promise<Types.User> {
+  const res = await fetch("http://localhost:3000/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+    });
 
-//temporanea todo
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+  if (!res.ok) {
+    throw new Error("Credenziali non valide");
+  }
 
-export async function checkEmailValid(email: string): Promise<boolean> {
-  await delay(1000);
-  return true;
-}
-
-export async function checkCredentials(email: string, pw: string): Promise<boolean> {
-  await delay(1000);
-  return true;
+  const data = await res.json();
+  return data;
 }

@@ -1,10 +1,6 @@
 // info utente
 export interface User{
-    id: string,
-    email: string,
-    password: string,
-    nome: string,
-    cognome: string
+    userId: string,
 }
 
 // stato dell'analisi

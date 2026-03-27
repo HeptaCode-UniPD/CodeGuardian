@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {checkEmailValid, checkCredentials, getIDbyEmail} from '../services/UserService';
+import { checkCredentials} from '../services/UserService';
 import { saveUserID, useIsLogged} from '../services/SessionService';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -9,7 +9,6 @@ export default function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isEmailValid, setEmailValid] = useState(true);
     const [isCredentialCorrect, setCredentialCorrect] = useState(true);
     const key = 'userID';
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -23,22 +22,15 @@ const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
-    if(isEmailValid){
-        const result_valid = await checkEmailValid(email);
-        setEmailValid(result_valid);
-        if(result_valid){
-            const result_credential = await checkCredentials(email, password);
-            setCredentialCorrect(result_credential);
-            
-            if(result_credential){
-                saveUserID(key, await getIDbyEmail(email));
-                setLoading(false);
-                navigate('/repositories');
-                return
-            }
-        }
+    try{
+        const result_credential = await checkCredentials(email, password);
+        saveUserID(key, result_credential.userId);
+        setLoading(false);
+        navigate('/repositories');
+    }catch{
+        setCredentialCorrect(false);
+        setLoading(false);
     }
-    setLoading(false);
 };
 
 const handleAnnulla = async () => {
@@ -54,11 +46,11 @@ const handleAnnulla = async () => {
             <legend aria-hidden="true">Accedi</legend>
             <div>
                 <label htmlFor="email-input">Email: </label>
-                <input id="email-input" name="email" value={email} onChange={(e) => {setEmail(e.target.value); setCredentialCorrect(true); setEmailValid(true);}} placeholder="Email"/>
+                <input id="email-input" name="email" value={email} onChange={(e) => {setEmail(e.target.value); setCredentialCorrect(true);}} placeholder="Email"/>
             </div>
             <div>
                 <label htmlFor="password-input">Password: </label>
-                <input id="password-input" name="password" type={isPasswordVisible ? 'text' : 'password'} value={password} onChange={(e) => {setPassword(e.target.value); setCredentialCorrect(true); setEmailValid(true);}}/>
+                <input id="password-input" name="password" type={isPasswordVisible ? 'text' : 'password'} value={password} onChange={(e) => {setPassword(e.target.value); setCredentialCorrect(true);}}/>
                 <button type="button" onClick={togglePasswordVisibility} id="password-icon" aria-label={isPasswordVisible ? 'Nascondi password' : 'Mostra password'}>
                     {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
                 </button>
@@ -66,10 +58,9 @@ const handleAnnulla = async () => {
             
             <div>
                 <button type="reset" id="reset-button" disabled={loading}> Annulla </button>
-                <button type="submit" id="login" disabled={loading || !isEmailValid || !email || !password}> Accedi </button>
+                <button type="submit" id="login" disabled={loading || !email || !password}> Accedi </button>
             </div>
-            {!isCredentialCorrect && !loading && email && password && isEmailValid &&  <p className="error"> Le credenziali non sono corrette.</p>}
-            {!isEmailValid &&email && <p id="email-not-valid"> L'email è in un formato non valido.</p>}
+            {!isCredentialCorrect && !loading && email && password &&  <p className="error"> Le credenziali non sono corrette.</p>}
             {loading && email && password && <p id="loading"> Verifica informazioni...</p>}
         </form>
     </article>

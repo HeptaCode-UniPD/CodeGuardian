@@ -26,7 +26,7 @@ const DiffBlock = ({ part }: { part: Diff.Change }) => {
   const { prefix, className } = getDiffProps(part);
   const lines = part.value.split('\n').filter(line => line.trim() !== '');
 
-  const renderedLines = lines.map((line, i) => (
+  const renderedLines = lines.map((line) => (
     <div key={line}>{prefix}{line}</div>
   ));
 
