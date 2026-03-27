@@ -15,12 +15,19 @@ export default defineConfig({
   },
   
   test: {
-    watch: false,
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setupTests.ts',
-    clearMocks: true,
-    pool: 'threads',
-  },
+      watch: false,
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/test/setupTests.ts',
+      clearMocks: true,
+      pool: 'threads',
+      coverage: {
+        provider: 'v8',
+        reporter: ['lcov', 'text'],
+        reportsDirectory: './coverage',
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: ['src/test/**', 'src/types/**', 'src/main.tsx'],
+      },
+    },
 
 })
