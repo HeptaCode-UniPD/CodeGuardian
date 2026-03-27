@@ -1,3 +1,6 @@
+name: Software Metrics Check e Test
+on: [push, pull_request]
+
 jobs:
   test:
     name: run tests
