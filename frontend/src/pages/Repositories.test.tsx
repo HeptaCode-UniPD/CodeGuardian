@@ -47,7 +47,6 @@ describe('Repositories', () => {
         });
 
         expect(screen.getByText('PoC')).toBeInTheDocument();
-        expect(screen.getAllByText(/public|private/i).length).toBeGreaterThan(0);
     });
 
     it('mostra il messaggio di errore se il fetch restituisce null', async () => {

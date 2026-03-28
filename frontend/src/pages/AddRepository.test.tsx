@@ -25,26 +25,9 @@ describe('AddRepository (Versione Mock Estremo)', () => {
         return <div data-testid="location-display">{location.pathname}</div>;
     };
 
-    it('mostra errore se l\'URL non è valido dopo il submit', async () => {
-        (sessionService.useIsLogged as any).mockReturnValue(true);
-        (repoService.checkRepoValid as any).mockResolvedValue(false);
-
-        render(<MemoryRouter><AddRepository /></MemoryRouter>);
-
-        const input = screen.getByLabelText(/URL repository GitHub/i);
-        fireEvent.change(input, { target: { value: 'test-url' } });
-        
-        fireEvent.click(screen.getByRole('button', { name: /Importa/i }));
-
-        await waitFor(() => {
-        expect(screen.getByText(/L'URL inserito non è valido/i)).toBeInTheDocument();
-        });
-    });
-
     it('va a repositories quando il link immesso è valido e pubblico', async () => {
         const user = userEvent.setup();
         (sessionService.useIsLogged as any).mockReturnValue(true);
-        (repoService.checkRepoValid as any).mockResolvedValue(true);
         (repoService.checkRepoAccess as any).mockResolvedValue(true);
 
         render(<MemoryRouter><AddRepository /><LocationDisplay /></MemoryRouter>);
@@ -63,7 +46,6 @@ describe('AddRepository (Versione Mock Estremo)', () => {
 
     it('mostra errore se la repository è privata', async () => {
         (sessionService.useIsLogged as any).mockReturnValue(true);
-        (repoService.checkRepoValid as any).mockResolvedValue(true);
         (repoService.checkRepoAccess as any).mockResolvedValue(false);
 
         render(<MemoryRouter><AddRepository /></MemoryRouter>);
@@ -75,7 +57,7 @@ describe('AddRepository (Versione Mock Estremo)', () => {
         fireEvent.click(screen.getByRole('button', { name: /Importa/i }));
 
         await waitFor(() => {
-        expect(screen.getByText(/Repository privato, impossibile importare/i)).toBeInTheDocument();
+        expect(screen.getByText(/Repository privato o URL invalido./i)).toBeInTheDocument();
         });
     });
 });

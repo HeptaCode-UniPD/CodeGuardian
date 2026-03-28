@@ -42,7 +42,7 @@ describe('UserPage', () => {
     it('mostra i dati utente dopo il caricamento', async () => {
         const target = Mock.mock_user[0];
         (sessionService.useIsLogged as any).mockReturnValue(true);
-        (sessionService.getUserID as any).mockReturnValue(target.id);
+        (sessionService.getUserID as any).mockReturnValue(target.userId);
         (userService.getInfoUserByID as any).mockResolvedValue(target);
 
         await act(async () => {

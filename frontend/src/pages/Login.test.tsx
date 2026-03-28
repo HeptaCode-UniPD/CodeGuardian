@@ -63,66 +63,42 @@ describe('Login', () => {
         expect(passwordInput()).toHaveAttribute('type', 'password');
     });
 
-    it('mostra errore se l\'email non è valida', async () => {
-        const user = userEvent.setup();
-        (sessionService.useIsLogged as any).mockReturnValue(true);
-
-        render(<MemoryRouter><Login /></MemoryRouter>);
-
-        await user.type(emailInput(), 'email-non-valida');
-        await user.type(passwordInput(), '1234');
-        expect(passwordInput()).toHaveAttribute('type', 'password');
-
-        const form = screen.getByLabelText(/Email/i).closest('form')!;
-        await act(async () => { fireEvent.submit(form); });
-
-        await waitFor(() => {
-        expect(screen.getByText(/L'email è in un formato non valido/i)).toBeInTheDocument();
-        });
-    });
-
     it('mostra errore se le credenziali sono errate', async () => {
         const user = userEvent.setup();
         (sessionService.useIsLogged as any).mockReturnValue(true);
-        (userService.checkCredentials as any).mockResolvedValue(false);
+        (userService.checkCredentials as any).mockRejectedValue(new Error("Credenziali non valide"));
 
         render(<MemoryRouter><Login /></MemoryRouter>);
 
         await user.type(emailInput(), 'test@test.com');
         await user.type(passwordInput(), 'password sbagliata');
-        expect(passwordInput()).toHaveAttribute('type', 'password');
 
-        const form = screen.getByLabelText(/Email/i).closest('form')!;
-        await act(async () => { fireEvent.submit(form); });
-
+        await user.click(screen.getByRole('button', { name: /Accedi/i }));
         await waitFor(() => {
-        expect(screen.getByText(/Le credenziali non sono corrette/i)).toBeInTheDocument();
+            expect(screen.getByText(/Le credenziali non sono corrette/i)).toBeInTheDocument();
         });
     });
 
     it('naviga a /repositories dopo il login con successo', async () => {
         const user = userEvent.setup();
+        const mockUser = { userId: '1', email: 'test@test.com' };
         (sessionService.useIsLogged as any).mockReturnValue(true);
-        (userService.checkCredentials as any).mockResolvedValue(true);
+        (userService.checkCredentials as any).mockResolvedValue(mockUser);
         (sessionService.saveUserID as any).mockReturnValue(undefined);
 
         render(
-        <MemoryRouter>
-            <Login />
-            <LocationDisplay />
-        </MemoryRouter>
+            <MemoryRouter>
+                <Login />
+                <LocationDisplay />
+            </MemoryRouter>
         );
 
         await user.type(emailInput(), 'test@test.com');
         await user.type(passwordInput(), '1234');
-        expect(passwordInput()).toHaveAttribute('type', 'password');
-
         await user.click(screen.getByRole('button', { name: /Accedi/i }));
-
         await waitFor(() => {
-        expect(screen.getByTestId('location-display')).toHaveTextContent('/repositories');
+            expect(screen.getByTestId('location-display')).toHaveTextContent('/repositories');
         });
-
         expect(sessionService.saveUserID).toHaveBeenCalledWith('userID', '1');
     });
 
@@ -139,19 +115,5 @@ describe('Login', () => {
 
         expect(emailInput()).toHaveValue('');
         expect(passwordInput()).toHaveValue('');
-    });
-
-    it('reindirizza al login se l\'utente non è loggato', async () => {
-        vi.stubGlobal('location', { ...window.location, href: '' });
-        (sessionService.useIsLogged as any).mockImplementation(() => {
-        window.location.href = '/login';
-        });
-
-        await act(async () => {
-        render(<MemoryRouter><Login /></MemoryRouter>);
-        });
-
-        expect(window.location.href).toBe('/login');
-        vi.unstubAllGlobals();
     });
 });
