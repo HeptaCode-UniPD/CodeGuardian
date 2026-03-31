@@ -71,14 +71,16 @@ describe('RepositoriesService - integrazione', () => {
     });
 
     it('checkRepoAccess lancia errore se il server risponde con 400', async () => {
-        server.use(
-            http.post('http://localhost:3000/repo', () => {
-                return new HttpResponse(null, { status: 400 });
-            })
-        );
+        const messaggioBackend = "Repository privato o URL invalido.";
 
-        await expect(RepositoriesService.checkRepoAccess('url-non-valida'))
-            .rejects
-            .toThrow('URL non valido');
-    });
+            server.use(
+                http.post('http://localhost:3000/repo', () => {
+                    return HttpResponse.json(
+                        { message: messaggioBackend }, 
+                        { status: 404 });}));
+
+            await expect(RepositoriesService.checkRepoAccess('url-inesistente'))
+                .rejects
+                .toThrow(messaggioBackend);
+        });
 });

@@ -87,10 +87,15 @@ describe('RepositoriesService', () => {
     });
 
     it('checkRepoAccess lancia errore se URL non valido', async () => {
-        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
-        await expect(RepositoriesService.checkRepoAccess('http://url-non-valida'))
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: false,
+            status: 400,
+            json: () => Promise.resolve({ message: "Repository privato o URL invalido." })
+        }));
+
+        await expect(RepositoriesService.checkRepoAccess('http://url-non-valido'))
             .rejects
-            .toThrow("URL non valido");
+            .toThrow("Repository privato o URL invalido.");
     });
 
 
