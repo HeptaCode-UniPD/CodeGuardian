@@ -13,6 +13,8 @@ vi.mock('../services/AnalysisService', () => ({
 
 vi.mock('../services/RepositoriesService', () => ({
   getRepositoriesByUser: vi.fn(),
+  getRepositoryById: vi.fn(),
+  deleteRepo: vi.fn(),
 }));
 
 vi.mock('../services/SessionService', () => ({
@@ -24,11 +26,6 @@ vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return { ...actual, useParams: vi.fn() };
 });
-
-vi.mock('../services/RepositoriesService', () => ({
-  getRepositoriesByUser: vi.fn(),
-  deleteRepo: vi.fn(),  // ← aggiunto
-}));
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -50,62 +47,54 @@ beforeEach(() => {
 });
 
   it('renderizza i dati del repository e la sezione suggerimenti', async () => {
-    const targetRepo = Mock.mock_repositories[0];
-    const targetReport = Mock.mock_reports[0];
+      const targetRepo = Mock.mock_repositories[0];
+      const targetReport = Mock.mock_reports[0];
 
-    (useParams as any).mockReturnValue({ id: targetRepo.id });
-    (repositoriesService.getRepositoriesByUser as any).mockResolvedValue(Mock.mock_repositories);
-    (analysisService.getAnalysisByUrl as any).mockResolvedValue(targetReport);
+      (useParams as any).mockReturnValue({ id: targetRepo.id });
+      (repositoriesService.getRepositoryById as any).mockResolvedValue(targetRepo);
+      (analysisService.getAnalysisByUrl as any).mockResolvedValue(targetReport);
 
-    await act(async () => {
-      render(<MemoryRouter><DettagliRepo /></MemoryRouter>);
-    });
+      await act(async () => {
+          render(<MemoryRouter><DettagliRepo /></MemoryRouter>);});
 
-    await waitFor(() => {
-      expect(screen.getByText(targetRepo.name)).toBeInTheDocument();
-      expect(screen.getByText(targetReport.response)).toBeInTheDocument();
-    });
+      await waitFor(() => {
+          expect(screen.getByText(targetRepo.name)).toBeInTheDocument();
+          expect(screen.getByText(targetReport.response)).toBeInTheDocument();});
   });
 
   it('mostra il messaggio di caricamento', async () => {
-    (useParams as any).mockReturnValue({ id: '1' });
-    (repositoriesService.getRepositoriesByUser as any).mockReturnValue(new Promise(() => {}));
+      (useParams as any).mockReturnValue({ id: '1' });
+      (repositoriesService.getRepositoryById as any).mockReturnValue(new Promise(() => {}));
 
-    await act(async () => {
-      render(<MemoryRouter><DettagliRepo /></MemoryRouter>);
-    });
+      await act(async () => {
+          render(<MemoryRouter><DettagliRepo /></MemoryRouter>);
+      });
 
-    expect(screen.getByText(/Caricamento/i)).toBeInTheDocument();
+      expect(screen.getByText(/Caricamento/i)).toBeInTheDocument();
   });
 
   it('mostra errore se il repository non viene trovato', async () => {
-    (useParams as any).mockReturnValue({ id: '999' });
-    (repositoriesService.getRepositoriesByUser as any).mockResolvedValue(Mock.mock_repositories);
-    (analysisService.getAnalysisByUrl as any).mockResolvedValue(null);
+      (useParams as any).mockReturnValue({ id: '1' });
+      (repositoriesService.getRepositoryById as any).mockResolvedValue(null);
 
-    await act(async () => {
       render(<MemoryRouter><DettagliRepo /></MemoryRouter>);
-    });
 
-    await waitFor(() => {
-      expect(screen.getByText(/Analisi del repository selezionato non trovata/i)).toBeInTheDocument();
-    });
+      await waitFor(() => {
+          expect(screen.getByText(/Analisi del repository selezionato non trovata/i)).toBeInTheDocument();
+      });
   });
 
   it('mostra errore se l\'analisi non viene trovata', async () => {
-    const targetRepo = Mock.mock_repositories[0];
+      const targetRepo = Mock.mock_repositories[0];
+      (useParams as any).mockReturnValue({ id: targetRepo.id });
+      (repositoriesService.getRepositoryById as any).mockResolvedValue(targetRepo);
+      (analysisService.getAnalysisByUrl as any).mockResolvedValue(null);
 
-    (useParams as any).mockReturnValue({ id: targetRepo.id });
-    (repositoriesService.getRepositoriesByUser as any).mockResolvedValue(Mock.mock_repositories);
-    (analysisService.getAnalysisByUrl as any).mockResolvedValue(null);
-
-    await act(async () => {
       render(<MemoryRouter><DettagliRepo /></MemoryRouter>);
-    });
 
-    await waitFor(() => {
-      expect(screen.getByText(/Analisi del repository selezionato non trovata/i)).toBeInTheDocument();
-    });
+      await waitFor(() => {
+          expect(screen.getByText(/Analisi del repository selezionato non trovata/i)).toBeInTheDocument();
+      });
   });
 
   it('non esegue il fetch se l\'ID non è presente nell\'URL', async () => {
@@ -119,16 +108,14 @@ beforeEach(() => {
     expect(analysisService.getAnalysisByUrl).not.toHaveBeenCalled();
   });
 
-  it('mostra errore se getRepositoriesByUser lancia un\'eccezione', async () => {
-    (useParams as any).mockReturnValue({ id: '1' });
-    (repositoriesService.getRepositoriesByUser as any).mockRejectedValue(new Error('Network error'));
+  it('mostra errore se getRepositoryById lancia un\'eccezione', async () => {
+      (useParams as any).mockReturnValue({ id: '1' });
+      (repositoriesService.getRepositoryById as any).mockRejectedValue(new Error('errore'));
 
-    await act(async () => {
       render(<MemoryRouter><DettagliRepo /></MemoryRouter>);
-    });
 
-    await waitFor(() => {
-      expect(screen.getByText(/Analisi del repository selezionato non trovata/i)).toBeInTheDocument();
-    });
+      await waitFor(() => {
+          expect(screen.getByText(/Analisi del repository selezionato non trovata/i)).toBeInTheDocument();
+      });
   });
 });

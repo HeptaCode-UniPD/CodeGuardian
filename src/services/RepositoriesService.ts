@@ -18,6 +18,7 @@ export async function deleteRepo(idRepo: string, idUtente:string): Promise<boole
   return true;
 }
 
+
 export async function getRepositoriesByUser(id: string): Promise<Types.Repository[] | undefined> {
   const res = await fetch(`http://localhost:3000/repos?userId=${id}`, {
     method: "GET",
@@ -25,6 +26,19 @@ export async function getRepositoriesByUser(id: string): Promise<Types.Repositor
 
   if (!res.ok) {
     throw new Error("Utente non trovato");
+  }
+
+  const data = await res.json();
+  return data;
+};
+
+export async function getRepositoryById(id: string): Promise<Types.Repository | undefined> {
+  const res = await fetch(`http://localhost:3000/repo?repoId=${id}`, {
+    method: "GET",
+    });
+
+  if (!res.ok) {
+    throw new Error("Repository non trovato");
   }
 
   const data = await res.json();

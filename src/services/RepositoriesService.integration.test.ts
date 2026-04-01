@@ -21,6 +21,14 @@ const server = setupServer(
     http.post('http://localhost:3000/repo', () => {
         return HttpResponse.json({ success: true });
     }),
+
+    http.get('http://localhost:3000/repo', ({ request }) => {
+    const url = new URL(request.url);
+    const repoId = url.searchParams.get('repoId');
+    const repo = Mock.mock_repositories.find(r => r.id === repoId);
+    if (!repo) return new HttpResponse(null, { status: 404 });
+    return HttpResponse.json(repo);
+}),
 );
 
 beforeAll(() => server.listen());
@@ -83,4 +91,23 @@ describe('RepositoriesService - integrazione', () => {
                 .rejects
                 .toThrow(messaggioBackend);
         });
+
+    it('getRepositoryById chiama il server e restituisce il repository', async () => {
+        const expected = Mock.mock_repositories[0];
+        const result = await RepositoriesService.getRepositoryById(expected.id);
+
+        expect(result).toEqual(expected);
+    });
+
+    it('getRepositoryById lancia errore se il server risponde con 404', async () => {
+        server.use(
+            http.get('http://localhost:3000/repo', () => {
+                return new HttpResponse(null, { status: 404 });
+            })
+        );
+
+        await expect(RepositoriesService.getRepositoryById('id-inesistente'))
+            .rejects
+            .toThrow('Repository non trovato');
+    });
 });

@@ -73,6 +73,13 @@ describe('RepositoriesService', () => {
             .toThrow("Utente non trovato");
     });
 
+    it('getRepositoryById lancia errore se repo non trovato', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
+        await expect(RepositoriesService.getRepositoryById("id-inesistente"))
+            .rejects
+            .toThrow("Repository non trovato");
+    });
+
     it('checkRepoAccess restituisce true', async () => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }));
         const result = await RepositoriesService.checkRepoAccess('http://qualsiasi-url');
@@ -121,5 +128,21 @@ describe('RepositoriesService', () => {
         await expect(RepositoriesService.deleteRepo('id-repo', 'id-utente'))
             .rejects
             .toThrow("Repository non trovato con idRepo: id-repo e idUtente: id-utente");
+    });
+
+    it('getRepositoryById restituisce il repository corretto', async () => {
+        const expected = Mock.mock_repositories[0];
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => expected
+        }));
+
+        const result = await RepositoriesService.getRepositoryById(expected.id);
+
+        expect(fetch).toHaveBeenCalledWith(
+            `http://localhost:3000/repo?repoId=${expected.id}`,
+            { method: "GET" }
+        );
+        expect(result).toEqual(expected);
     });
 });

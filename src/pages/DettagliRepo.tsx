@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { type AnalysisReport, type Repository} from '../types/types';
 import { getAnalysisByUrl} from '../services/AnalysisService';
-import { getRepositoriesByUser} from '../services/RepositoriesService';
+import { getRepositoryById} from '../services/RepositoriesService';
 import { getUserID} from '../services/SessionService';
 import { CircularProgress} from '../components/CircularProgress';
 import { DeleteRepoButton} from '../components/DeleteRepoButton';
@@ -32,8 +32,7 @@ export default function DettagliRepo() {
         const fetchData = async () => {
             setLoading(true);
             try{
-                const search_repositories = await getRepositoriesByUser(userID);
-                const search_repository = search_repositories?.find((repo) => repo.id === id);
+                const search_repository = await getRepositoryById(id);
                 setRepository(search_repository??null);
                 if(search_repository){
                     const result = await getAnalysisByUrl(search_repository.url);
