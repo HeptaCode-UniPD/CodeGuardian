@@ -1,0 +1,47 @@
+import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { getRepositoriesByUser, deleteRepo} from '../services/RepositoriesService';
+import { useIsLogged, getUserID} from '../services/SessionService';
+import { DeleteRepoButton} from '../components/DeleteRepoButton';
+import { type Repository} from '../types/types';
+
+export default function Repositories() {
+  useIsLogged();
+  const key = 'userID';
+  const id = (getUserID(key) ?? '');
+  const [loading, setLoading] = useState(true);
+  const [repositories, setRepositories] = useState<Repository[] | null>(null);
+
+  useEffect(() => {
+      if(!id) return;
+      
+      const fetchData = async () => {
+        setLoading(true);
+        const result = await getRepositoriesByUser(id);
+        if (result) {setRepositories(result);}
+        setLoading(false); };
+
+      fetchData();
+  }, [id]);
+
+  if (loading) return <p>Caricamento...</p>;
+  if (!repositories) return <div>La ricerca dei repository non è andata a buon fine. <Link to="/Repositories">Riprova</Link></div>;
+ 
+  return (
+    <div id="repositories-page">
+      <aside>
+        <Link to="/addRepository">+ Aggiungi repository</Link>
+      </aside>
+      <ul>
+        {repositories?.map((item) => (
+          <li key={item.id}>
+            <div className="containerLink">
+              <Link to={`/repository/${item.id}`}><span>{item.name}</span></Link>
+              <DeleteRepoButton repository={item} userID={id} onDeleted={() => setRepositories(prev => prev?.filter(r => r.id !== item.id) ?? null)}/>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
