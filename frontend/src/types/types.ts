@@ -29,28 +29,19 @@ export enum AnalysisType {
     Test = 'test',
 }
 
-// report dell'analisi
-export interface AnalysisReport{
-    id: string,
-    repositoryID: string, //non ho messo userID, non credo serva
-    status: AnalysisStatus,
-    insight: AnalysisInsight,
-    type: AnalysisType,
-
-    originalCode: string,
-    newCode: string,
-    path: string
-}
-
 // info repository
 export interface Repository{
     id: string,
     userID: string[], //un repository può essere aggiunto da più persone
     url: string,
-    name: string,
+    name: string
+}
+
+export interface AnalysisReport{
+    id: string,
+    status: string,
+    response:string,
     // pctTest: number,
     // pctDoc: number,
     // pctOwasp: number,
-
-    // reason:string
 }

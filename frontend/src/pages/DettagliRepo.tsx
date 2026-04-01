@@ -1,28 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import { type AnalysisReport, type Repository, AnalysisType} from '../types/types';
-import { getAnalysisPayload} from '../services/AnalysisService';
-import { RemediationCard} from '../components/RemediationCard';
+import { getAnalysisByUrl} from '../services/AnalysisService';
+import { getRepositoriesByUser} from '../services/RepositoriesService';
+import { getUserID} from '../services/SessionService';
 import { CircularProgress} from '../components/CircularProgress';
 import { useParams, Link} from 'react-router-dom';
 import { useIsLogged } from '../services/SessionService';
-
-interface GruppiRemediation {
-  test?: AnalysisReport[];
-  doc?: AnalysisReport[];
-  owasp?: AnalysisReport[];
-}
-
-const RemediationSection = ({ title, items }: { title: string, items: AnalysisReport[] }) => (
-  <li>
-    <p>{items.length} file: {title}</p>
-    {items.map((item) => (
-      <details key={item.id}> 
-        <summary>{item.path}:</summary>
-        <dd> <RemediationCard remediation={item} /> </dd>
-      </details>
-    ))}
-  </li>
-);
 
 const InfoRepo = ({repository}:{repository: Repository}) => (
     <aside>
@@ -37,34 +20,39 @@ const InfoRepo = ({repository}:{repository: Repository}) => (
 
 export default function DettagliRepo() {
     useIsLogged();
+    const key = 'userID';
+    const userID = (getUserID(key) ?? '');
     const { id } = useParams<{ id: string }>(); //recupero l'id dall'URL per capire che repo sto guardando
-    const [repository, setRepository] = useState<Repository | null>(null); // useState : crea una variabile di stato, quando viene cambiata, React se ne accorge e ridisegna il componente
-    const [remediation, setRemediation] = useState<AnalysisReport[] | null>([]);
+    const [analysis, setAnalysis] = useState<AnalysisReport | null>(null); // useState : crea una variabile di stato, quando viene cambiata, React se ne accorge e ridisegna il componente
+    const [repository, setRepository] = useState<Repository | null>(null);
     const [loading, setLoading] = useState(true);
-
-    const gruppi = useMemo<GruppiRemediation>(() => ({
-        test: remediation?.filter(r => r.type === AnalysisType.Test),
-        doc: remediation?.filter(r => r.type === AnalysisType.Documentation),
-        owasp: remediation?.filter(r => r.type === AnalysisType.Owasp)
-    }), [remediation]);
 
     useEffect(() => {
         if(!id) return;
 
         const fetchData = async () => {
             setLoading(true);
-            const result = await getAnalysisPayload(id);
-            if (result) {
-                setRepository(result.repository);
-                setRemediation(result.remediation);}
+            try{
+                const search_repositories = await getRepositoriesByUser(userID);
+                const search_repository = search_repositories?.find((repo) => repo.id === id);
+                setRepository(search_repository??null);
+                if(search_repository){
+                    const result = await getAnalysisByUrl(search_repository.url);
+                    setAnalysis(result??null);
+                }
+            }catch{
+                setAnalysis(null);
+            }
+            finally{
             setLoading(false);}
+        }
 
         fetchData();
             
     }, [id]);
 
     if (loading) return <p>Caricamento...</p>;
-    if (!repository) return <div id="repo-error">Analisi del repository selezionato non trovata. <Link to="/repositories">← Indietro</Link></div>;
+    if (!analysis || !repository) return <div id="repo-error">Analisi del repository selezionato non trovata. <Link to="/repositories">← Indietro</Link></div>;
  
     return (
         <div id="dettagli-repo">
@@ -91,14 +79,8 @@ export default function DettagliRepo() {
                 </div>
 
                 <div id="remediation-block">
-                    <h2> Motivazioni dei suggerimenti</h2>
-                    {/* <p id="reason">{repository.reason}</p> */}
-                    <h2>{remediation?.length} file con suggerimento remediation</h2>
-                    <ul id="remediation-list">
-                        <RemediationSection title="Copertura test" items={gruppi.test ?? []} />
-                        <RemediationSection title="Completezza documentazione" items={gruppi.doc ?? []} />
-                        <RemediationSection title="Correttezza OWASP" items={gruppi.owasp ?? []} />
-                    </ul>
+                    <h2> Suggerimenti proposti</h2>
+                    <p>{analysis.response}</p>
                 </div>
             </div>
         </div>
