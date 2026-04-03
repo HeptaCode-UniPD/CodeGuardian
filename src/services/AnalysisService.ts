@@ -1,8 +1,8 @@
-export const API_URL = import.meta.env.VITE_API_URL || '${API_BASE_URL_USER}';
 import * as Types from '../types/types';
+import { API_BASE_URL_ANALYSIS } from "../config";
 
 export async function getLastAnalysis (repoUrl: string): Promise<Types.AnalysisReport | null> {
-  const res = await fetch(`http://localhost:4000/analysis/view?url=${repoUrl}`, {
+  const res = await fetch(`${API_BASE_URL_ANALYSIS}/analysis/view?url=${repoUrl}`, {
     method: "GET",
   });
 
@@ -15,7 +15,7 @@ export async function getLastAnalysis (repoUrl: string): Promise<Types.AnalysisR
 };
 
 export async function startNewAnalysis(url: string): Promise<Types.StartAnalysisResponse> {
-  const res = await fetch(`http://localhost:4000/analysis/request`, {
+  const res = await fetch(`${API_BASE_URL_ANALYSIS}/analysis/request`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ repoUrl: url }),
@@ -26,7 +26,7 @@ export async function startNewAnalysis(url: string): Promise<Types.StartAnalysis
 }
 
 export async function pollAnalysisStatus(jobId: string): Promise<Types.AnalysisStatus> {
-  const res = await fetch(`http://localhost:4000/analysis/status/${jobId}`);
+  const res = await fetch(`${API_BASE_URL_ANALYSIS}/analysis/status/${jobId}`);
   if (!res.ok) throw new Error('Errore nel polling.');
   const data = await res.json();
   return data.status;

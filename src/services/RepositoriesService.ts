@@ -1,4 +1,3 @@
-export const API_URL = import.meta.env.VITE_API_URL || '${API_BASE_URL_USER}';
 import {getUserID} from './SessionService';
 import * as Types from '../types/types';
 import { API_BASE_URL_USER } from "../config";
