@@ -107,6 +107,7 @@ describe('RepositoriesService', () => {
       json: async () => ({ success: true }),
     }));
 
+    await RepositoriesService.deleteRepo('id-repo', 'id-utente');
     expect(fetch).toHaveBeenCalledWith(
       `${API_BASE_URL_USER}/repo?repoId=id-repo&userId=id-utente`,
       expect.objectContaining({
@@ -138,6 +139,7 @@ describe('RepositoriesService', () => {
       json: async () => ({}),
     }));
 
+    await RepositoriesService.checkRepoAccess('https://github.com/user/repo');
     expect(fetch).toHaveBeenCalledWith(
       `${API_BASE_URL_USER}/repo`,
       expect.objectContaining({
