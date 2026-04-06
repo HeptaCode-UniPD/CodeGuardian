@@ -48,56 +48,59 @@ describe('StartAnalysisButton', () => {
   });
 
   it('mostra il dialog di conferma al click del bottone', async () => {
-    renderComponent();
-    await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));
-    expect(screen.getByText(/Sei sicuro di voler avviare l'analisi/i)).toBeInTheDocument();
+      renderComponent();
+      await act(async () => { await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));}); });
+      expect(screen.getByText(/Sei sicuro di voler avviare l'analisi/i)).toBeInTheDocument();
   });
 
   it('chiude il dialog alla pressione di Annulla', async () => {
-    renderComponent();
-    await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));
-    await userEvent.click(screen.getByText('Annulla'));
-    expect(screen.getByText(/Sei sicuro di voler avviare l'analisi/i).closest('dialog'))
-      .not.toHaveAttribute('open');
+      renderComponent();
+      await act(async () => { await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));}); });
+      await act(async () => { await userEvent.click(screen.getByText('Annulla')); });
+      expect(screen.getByText(/Sei sicuro di voler avviare l'analisi/i).closest('dialog'))
+          .not.toHaveAttribute('open');
   });
 
   it('chiama onSuccess subito se lo stato è done', async () => {
-    const onSuccess = vi.fn();
-    (AnalysisService.startNewAnalysis as any).mockResolvedValue({ status: 'done', repoUrl: TEST_URL });
+      const onSuccess = vi.fn();
+      (AnalysisService.startNewAnalysis as any).mockResolvedValue({ status: 'done', repoUrl: TEST_URL });
 
-    renderComponent({ onSuccess });
-    await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));
-    await userEvent.click(screen.getByText('Conferma'));
+      renderComponent({ onSuccess });
+      await act(async () => { await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));}); });
+      await act(async () => { await userEvent.click(screen.getByText('Conferma')); });
 
-    await waitFor(() => {
-      expect(AnalysisService.startNewAnalysis).toHaveBeenCalledWith(TEST_URL);
-      expect(onSuccess).toHaveBeenCalled();
-    });
+      await waitFor(() => {
+          expect(AnalysisService.startNewAnalysis).toHaveBeenCalledWith(TEST_URL);
+          expect(onSuccess).toHaveBeenCalled();
+      });
   });
 
   it('non chiama onSuccess se startNewAnalysis fallisce', async () => {
-    const onSuccess = vi.fn();
-    (AnalysisService.startNewAnalysis as any).mockRejectedValue(new Error('Network error'));
+      const onSuccess = vi.fn();
+      (AnalysisService.startNewAnalysis as any).mockRejectedValue(new Error('Network error'));
 
-    renderComponent({ onSuccess });
-    await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));
-    await userEvent.click(screen.getByText('Conferma'));
+      renderComponent({ onSuccess });
+      await act(async () => { await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));}); });
+      await act(async () => { await userEvent.click(screen.getByText('Conferma')); });
 
-    await waitFor(() => {
-      expect(onSuccess).not.toHaveBeenCalled();
-    });
+      await waitFor(() => { expect(onSuccess).not.toHaveBeenCalled(); });
   });
 
   it('mostra il dialog di errore se startNewAnalysis fallisce', async () => {
-    (AnalysisService.startNewAnalysis as any).mockRejectedValue(new Error('Network error'));
+      (AnalysisService.startNewAnalysis as any).mockRejectedValue(new Error('Network error'));
 
-    renderComponent();
-    await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));
-    await userEvent.click(screen.getByText('Conferma'));
+      renderComponent();
+      await act(async () => { await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: /avvia analisi/i }));}); });
+      await act(async () => { await userEvent.click(screen.getByText('Conferma')); });
 
-    await waitFor(() => {
-      expect(screen.getByText(/Errore durante l'avvio dell'analisi/i)).toBeInTheDocument();
-    });
+      await waitFor(() => {
+          expect(screen.getByText(/Errore durante l'avvio dell'analisi/i)).toBeInTheDocument();
+      });
   });
 
   // test con polling 

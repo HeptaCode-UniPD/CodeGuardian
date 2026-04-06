@@ -67,7 +67,7 @@ describe('DettagliRepo', () => {
 
     await waitFor(() => {
       expect(screen.getByText(targetRepo.name)).toBeInTheDocument();
-      expect(screen.getByText(targetReport.response)).toBeInTheDocument();
+      expect(screen.getByText(targetReport.analysisDetails![0].agentName!)).toBeInTheDocument();
     });
   });
 

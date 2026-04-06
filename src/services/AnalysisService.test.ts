@@ -19,7 +19,6 @@ describe('AnalysisService', () => {
 
     const result = await getLastAnalysis('https://github.com/HeptaCode-UniPD/CodeGuardian');
     expect(result).toEqual(mockReport);
-    expect(result?.response).toBeDefined();
   });
 
   it('getLastAnalysis: chiama fetch con metodo GET e url corretto', async () => {
