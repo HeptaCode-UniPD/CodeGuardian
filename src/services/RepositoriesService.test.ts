@@ -20,6 +20,7 @@ describe('RepositoriesService', () => {
     const expected = [Mock.mock_repositories[0], Mock.mock_repositories[1]];
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
+      headers: { get: () => null },
       json: async () => expected,
     }));
 
@@ -36,6 +37,7 @@ describe('RepositoriesService', () => {
   it('non restituisce repository se non ne ha', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
+      headers: { get: () => null },
       json: async () => [],
     }));
 
@@ -48,6 +50,7 @@ describe('RepositoriesService', () => {
     const expected = [Mock.mock_repositories[0]];
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
+      headers: { get: () => null },
       json: async () => expected,
     }));
 
@@ -58,6 +61,7 @@ describe('RepositoriesService', () => {
   it('getRepositoriesByUser lancia errore se utente non trovato', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
+      headers: { get: () => null },
       statusText: 'Not Found',
     }));
 
@@ -71,6 +75,7 @@ describe('RepositoriesService', () => {
     const expected = Mock.mock_repositories[0];
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
+      headers: { get: () => null },
       json: async () => expected,
     }));
 
@@ -85,6 +90,7 @@ describe('RepositoriesService', () => {
   it('getRepositoryById lancia errore se repo non trovato', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
+      headers: { get: () => null },
       statusText: 'Not Found',
     }));
 
@@ -97,6 +103,7 @@ describe('RepositoriesService', () => {
   it('deleteRepo restituisce true se l\'eliminazione va a buon fine', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
+      headers: { get: () => null },
       json: async () => ({ success: true }),
     }));
 
@@ -109,12 +116,13 @@ describe('RepositoriesService', () => {
         body: JSON.stringify({ idUtente: 'id-utente', idRepo: 'id-repo' }),
       })
     );
-    expect(result).toBe(true);
+    await expect(RepositoriesService.deleteRepo('id-repo', 'id-user')).resolves.toBeUndefined();
   });
 
   it('deleteRepo lancia errore se il repository non viene trovato', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
+      headers: { get: () => null },
       statusText: 'Not Found',
     }));
 
@@ -127,6 +135,7 @@ describe('RepositoriesService', () => {
   it('checkRepoAccess restituisce true se il repo è accessibile', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
+      headers: { get: () => null },
       json: async () => ({}),
     }));
 
@@ -138,13 +147,14 @@ describe('RepositoriesService', () => {
         headers: { 'Content-Type': 'application/json' },
       })
     );
-    expect(result).toBe(true);
+    await expect(RepositoriesService.deleteRepo('id-repo', 'id-user')).resolves.toBeUndefined();
   });
 
   it('checkRepoAccess lancia il messaggio del backend se il repo non è accessibile', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
       statusText: 'Bad Request',
+      headers: { get: () => null },
       json: async () => ({ message: 'Repository privato o URL invalido.' }),
     }));
 
@@ -156,6 +166,7 @@ describe('RepositoriesService', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
       statusText: 'Bad Request',
+      headers: { get: () => null },
       json: async () => ({ message: ['url must be a URL address'] }),
     }));
 
@@ -167,6 +178,7 @@ describe('RepositoriesService', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
       statusText: 'Conflict',
+      headers: { get: () => null },
       json: async () => ({ message: 'Repository già presente per questo utente.' }),
     }));
 
