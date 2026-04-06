@@ -31,12 +31,13 @@ export async function post<T>(url: string, body: unknown, options?: HttpOptions)
   return res.json();
 }
 
-export async function del<T>(url: string, body: unknown, options?: HttpOptions): Promise<T> {
+export async function del<T>(url: string, body: unknown, options?: HttpOptions): Promise<T | void> {
   const res = await fetch(url, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   if (!res.ok) return handleError(res, options);
+  if (res.status === 204 || res.headers.get('content-length') === '0') return;
   return res.json();
 }
