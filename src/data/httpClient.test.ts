@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { get, post, del } from './httpClient';
 
-const mockFetch = (ok: boolean, data?: unknown, statusText = 'Error') => {
+const mockFetch = (ok: boolean, data?: unknown, statusText = 'Error', status = 200) => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
     ok,
+    status,
     statusText,
+    headers: { get: () => null },
     json: async () => data,
   }));
 };
@@ -58,12 +60,17 @@ describe('post', () => {
 });
 
 // --- del ---
-
 describe('del', () => {
-  it('restituisce i dati quando fetch ha successo', async () => {
+  it('restituisce i dati quando fetch ha successo con body', async () => {
     mockFetch(true, { deleted: true });
     const result = await del<{ deleted: boolean }>('http://test.com', { id: '1' });
     expect(result).toEqual({ deleted: true });
+  });
+
+  it('restituisce void quando il server risponde 204', async () => {
+    mockFetch(true, undefined, 'No Content', 204);
+    const result = await del('http://test.com', { id: '1' });
+    expect(result).toBeUndefined();
   });
 
   it('lancia un errore con statusText quando !ok e nessuna opzione', async () => {
