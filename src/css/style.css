@@ -17,6 +17,7 @@
   --disable: #32363a;
   --interactive-area: #262C36;
   --bgcolor: #212830;
+  --code: #323c48;
   --nav-bg: #151B23;
   --dialog: #0d1116;
   --added-code: #516525;
@@ -756,4 +757,63 @@ dialog::backdrop {
 
 dialog.error-dialog button{
   flex: 1 1 100%;
+}
+
+/* REPORT ANALYSIS */
+#dettagli-repo .report h2,
+#dettagli-repo .report h3{
+  font-size: 1em;
+} 
+
+#dettagli-repo .report summary.title-area{
+  font-size: 1.3em;
+  font-weight: 500;
+} 
+
+#dettagli-repo details[open].report summary.title-area{
+  border-bottom: 1px solid var(--detail-txt);
+  padding-bottom: 0.5em;
+} 
+
+#dettagli-repo h2 span{
+  font-weight: normal;
+  font-style: italic;
+  font-size: 1em;
+} 
+
+
+#dettagli-repo .report h1{
+  display: none;
+} 
+
+#dettagli-repo .report pre{
+  background-color: var(--code);
+  padding: 1em;
+  border:1px solid var(--detail-txt);
+  border-radius: 0.5em;
+} 
+
+#dettagli-repo .report{
+  background-color: var(--interactive-area);
+  padding: 0.5em 2em;
+  border-radius: 0.5em;
+  margin-bottom: 1em;
+} 
+
+#dettagli-repo details.report{
+  width: 100%;
+} 
+
+#dettagli-repo #analysis-report{
+  flex: 1 1 70%;
+}
+
+#dettagli-repo details.report .report-content {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+#dettagli-repo details.report[open] .report-content {
+  max-height: 1000px;
 }

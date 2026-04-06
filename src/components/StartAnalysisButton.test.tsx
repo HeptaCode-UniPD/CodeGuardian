@@ -35,7 +35,7 @@ describe('StartAnalysisButton', () => {
     setupDialog();
   });
 
-  // ─── test senza polling: userEvent reale ─────────────────────────────────
+  // test senza polling: userEvent reale
 
   it('renderizza il bottone avvia analisi', () => {
     renderComponent();
@@ -100,7 +100,7 @@ describe('StartAnalysisButton', () => {
     });
   });
 
-  // ─── test con polling ─────────────────────────────────────────────────────
+  // test con polling 
 
   describe('con polling (fake timers)', () => {
     beforeEach(() => {

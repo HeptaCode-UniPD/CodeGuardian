@@ -8,6 +8,7 @@ import { DeleteRepoButton} from '../components/DeleteRepoButton';
 import { StartAnalysisButton} from '../components/StartAnalysisButton';
 import { useParams, Link} from 'react-router-dom';
 import { useIsLogged } from '../services/SessionService';
+import ReactMarkdown from 'react-markdown';
 
 const InfoRepo = ({repository, userID}:{repository: Repository, userID:string}) => (
     <aside>
@@ -59,22 +60,29 @@ export default function DettagliRepo() {
                         <h2>Analisi</h2>
                         <ul id="report-percentage">
                             <li>
-                                {/* <CircularProgress percentage={repository.pctTest} label="Copertura Test"/> */}
+                                <CircularProgress percentage={analysis?.scores?.[1]??0} label="Copertura Test"/>
                             </li>
                             <li>
-                                {/* <CircularProgress percentage={repository.pctDoc} label="Completezza Documentazione"/> */}
+                                <CircularProgress percentage={analysis?.scores?.[2]??0} label="Completezza Documentazione"/>
                             </li>
                             <li>
-                                {/* <CircularProgress percentage={repository.pctOwasp} label="Correttezza OWASP"/> */}
+                                <CircularProgress percentage={analysis?.scores?.[0]??0} label="Correttezza OWASP"/>
                             </li>
                         </ul>
                         <StartAnalysisButton url={repository.url} onSuccess={fetchData}
                             initialJobId={analysis?.status === 'processing' ? analysis.commitId : undefined}/>
                     </div>
                 </div>
-                <div>
-                    <h2> Suggerimenti proposti</h2>
-                    {analysis? <p>{analysis.response}</p> : <p>Nessuna analisi disponibile. Avvia un'analisi per vedere i risultati.</p>}
+                <div id="analysis-report">
+                    {analysis && <h2>Suggerimenti proposti, <span>ultima analisi: {new Date(analysis.date).toLocaleString('it-IT', {
+                        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false,})}</span></h2>}
+                    {!analysis ? (
+                        <p>Nessuna analisi disponibile. Avvia un'analisi per vedere i risultati.</p>) : (
+                        analysis?.analysisDetails?.map((detail, index) => (
+                            <details className="report" key={index}>
+                                <summary className='title-area'>{detail.agentName}</summary>
+                                <div className="report-content"><ReactMarkdown>{detail.report ?? 'Nessuna considerazione'}</ReactMarkdown></div>
+                            </details>)))}
                 </div>
             </div>
         </div>

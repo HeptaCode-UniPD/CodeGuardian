@@ -6,8 +6,8 @@ export async function getLastAnalysis(repoUrl: string): Promise<Types.AnalysisRe
   return get<Types.AnalysisReport>(`${API_BASE_URL_ANALYSIS}/analysis/view?url=${repoUrl}`);
 }
 
-export async function startNewAnalysis(url: string): Promise<Types.StartAnalysisResponse> {
-  return post<Types.StartAnalysisResponse>(`${API_BASE_URL_ANALYSIS}/analysis/request`, { repoUrl: url });
+export async function startNewAnalysis(repoUrl: string): Promise<Types.StartAnalysisResponse> {
+  return post<Types.StartAnalysisResponse>(`${API_BASE_URL_ANALYSIS}/analysis/request`, { repoUrl });
 }
 
 export async function pollAnalysisStatus(jobId: string): Promise<Types.AnalysisStatus> {

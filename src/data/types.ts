@@ -14,11 +14,20 @@ export interface Repository{
     name: string
 }
 
+export interface AnalysisDetails{
+    agentName?: string; //test, docs, owasp
+    summary?:string;
+    report?:string; 
+}
+
 export interface AnalysisReport{
-    id: string,
-    status: string,
-    response:string,
-    commitId?: string;
+    repoUrl?: string;
+    jobId?:string;
+    commitId?:string;
+    status: AnalysisStatus;
+    analysisDetails?: AnalysisDetails[];
+    scores?:number[];
+    date:Date;
 }
 
 export type AnalysisStatus = 'done' | 'processing' | 'error';
