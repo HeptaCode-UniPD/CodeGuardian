@@ -813,7 +813,3 @@ dialog.error-dialog button{
   max-height: 0;
   transition: max-height 0.3s ease;
 }
-
-#dettagli-repo details.report[open] .report-content {
-  max-height: 1000px;
-}
