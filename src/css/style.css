@@ -809,7 +809,6 @@ dialog.error-dialog button{
 }
 
 #dettagli-repo details.report .report-content {
-  overflow: hidden;
-  max-height: 0;
+  max-height: fit-content;
   transition: max-height 0.3s ease;
 }
