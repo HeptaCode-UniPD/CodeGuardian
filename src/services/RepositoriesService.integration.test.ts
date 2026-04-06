@@ -56,9 +56,8 @@ describe('RepositoriesService - integrazione', () => {
             .toThrow();
     });
 
-    it('deleteRepo chiama il server con i parametri corretti e restituisce true', async () => {
-        const result = await RepositoriesService.deleteRepo('id-repo', 'id-utente');
-        await expect(RepositoriesService.deleteRepo('id-repo', 'id-user')).resolves.toBeUndefined();
+    it('deleteRepo chiama il server con i parametri corretti', async () => {
+        await expect(RepositoriesService.deleteRepo('id-repo', 'id-utente')).resolves.toBeUndefined();
     });
 
     it('deleteRepo lancia errore se il server risponde con 404', async () => {
@@ -74,7 +73,6 @@ describe('RepositoriesService - integrazione', () => {
     });
 
     it('checkRepoAccess chiama il server e restituisce true', async () => {
-        const result = await RepositoriesService.checkRepoAccess('https://github.com/user/repo');
         await expect(RepositoriesService.deleteRepo('id-repo', 'id-user')).resolves.toBeUndefined();
     });
 

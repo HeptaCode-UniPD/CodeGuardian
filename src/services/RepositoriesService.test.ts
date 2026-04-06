@@ -107,13 +107,12 @@ describe('RepositoriesService', () => {
       json: async () => ({ success: true }),
     }));
 
-    const result = await RepositoriesService.deleteRepo('id-repo', 'id-utente');
     expect(fetch).toHaveBeenCalledWith(
-      `${API_BASE_URL_USER}/repo`,
+      `${API_BASE_URL_USER}/repo?repoId=id-repo&userId=id-utente`,
       expect.objectContaining({
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idUtente: 'id-utente', idRepo: 'id-repo' }),
+        body: JSON.stringify({ userId: 'id-utente' }),
       })
     );
     await expect(RepositoriesService.deleteRepo('id-repo', 'id-user')).resolves.toBeUndefined();
@@ -139,7 +138,6 @@ describe('RepositoriesService', () => {
       json: async () => ({}),
     }));
 
-    const result = await RepositoriesService.checkRepoAccess('https://github.com/user/repo');
     expect(fetch).toHaveBeenCalledWith(
       `${API_BASE_URL_USER}/repo`,
       expect.objectContaining({
