@@ -6,12 +6,13 @@ interface StartAnalysisButtonProps {
   messageButton?: string;
   onSuccess?: () => void;
   initialJobId?:string;
+  isLast:boolean;
 }
 
 const POLL_INTERVAL_MS = 3000;
 const POLL_TIMEOUT_MS = 15 * 60 * 1000; // 15 minuti
 
-export const StartAnalysisButton = ({ url, messageButton, onSuccess, initialJobId }: StartAnalysisButtonProps) => {
+export const StartAnalysisButton = ({ url, messageButton, onSuccess, initialJobId, isLast}: StartAnalysisButtonProps) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const errorDialogRef = useRef<HTMLDialogElement>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -80,7 +81,7 @@ export const StartAnalysisButton = ({ url, messageButton, onSuccess, initialJobI
 
   return (
     <>
-      <button id="start-all" disabled={isPolling} onClick={() => dialogRef.current?.showModal()}>
+      <button id="start-all" disabled={isPolling || isLast} onClick={() => dialogRef.current?.showModal()}>
         {isPolling ? 'Analisi in corso...' : (messageButton ?? 'Avvia analisi')}
       </button>
 

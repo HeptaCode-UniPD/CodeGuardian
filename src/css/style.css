@@ -789,8 +789,9 @@ dialog.error-dialog button{
 #dettagli-repo .report pre{
   background-color: var(--code);
   padding: 1em;
-  border:1px solid var(--detail-txt);
+  border: 1px solid var(--detail-txt);
   border-radius: 0.5em;
+  overflow-x: auto;
 } 
 
 #dettagli-repo .report{
@@ -806,6 +807,7 @@ dialog.error-dialog button{
 
 #dettagli-repo #analysis-report{
   flex: 1 1 70%;
+  min-width: 0;
 }
 
 #dettagli-repo details.report .report-content {

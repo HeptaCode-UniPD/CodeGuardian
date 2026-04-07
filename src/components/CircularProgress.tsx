@@ -1,7 +1,7 @@
 import React from 'react';
 
 const getColorClass = (pct: number) => {
-  if (pct >= 90) return 'top-performance';
+  if (pct >= 80) return 'top-performance';
   if (pct >= 50) return 'medium-performance';
   return 'bad-performance';
 };

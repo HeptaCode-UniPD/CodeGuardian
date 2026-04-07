@@ -28,6 +28,7 @@ export interface AnalysisReport{
     analysisDetails?: AnalysisDetails[];
     scores?:number[];
     date:Date;
+    isLatest:boolean;
 }
 
 export type AnalysisStatus = 'done' | 'processing' | 'error';
