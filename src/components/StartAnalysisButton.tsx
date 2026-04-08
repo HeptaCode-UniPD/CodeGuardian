@@ -48,7 +48,7 @@ export const StartAnalysisButton = ({ url, messageButton, onSuccess, initialJobI
         } else if (status === 'error') {
           clearInterval(interval);
           setIsPolling(false);
-          setErrorMessage(`L'analisi ha riscontrato un errore. \n${messageErrorAnalysis}`);
+          setErrorMessage(`L'analisi ha riscontrato un errore. \n${messageErrorAnalysis??''}`);
           errorDialogRef.current?.showModal();
         }
         // se 'processing', continua il polling
