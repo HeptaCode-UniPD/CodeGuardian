@@ -11,8 +11,8 @@ describe('config', () => {
 
     const { API_BASE_URL_USER, API_BASE_URL_ANALYSIS } = await import('./config');
 
-    expect(API_BASE_URL_USER).toBe('http://3.65.40.23:3000');
-    expect(API_BASE_URL_ANALYSIS).toBe('http://63.178.195.4:4000');
+    expect(API_BASE_URL_USER).toBe('https://51fehz5pi5.execute-api.eu-central-1.amazonaws.com/prod');
+    expect(API_BASE_URL_ANALYSIS).toBe('https://zx8fxs5l93.execute-api.eu-central-1.amazonaws.com/prod');
   });
 
   it('usa le variabili d\'ambiente se definite', async () => {
