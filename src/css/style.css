@@ -677,6 +677,10 @@ main #state-div{
   background-color: var(--insert-url);
 }
 
+#repositories-page .containerLink:hover{
+  background-color: var(--interactive-area);
+}
+
 #add-repository-page form #form-actions{
   margin: 0 0 0 auto;
   width: fit-content;
